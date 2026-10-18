@@ -1,11 +1,32 @@
-<div align="center">
+# Arkvoid Inc. — Public Website
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Official website for **Arkvoid Inc.** (`https://arkvoid.com`).
 
-  <h1>Built with AI Studio</h2>
+## Overview
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+Arkvoid Inc. is building a persistent living world of immortals, sects and spirit beasts where inhabitants remember what you did, live their own lives while you are away, and are still there when you come back.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Tech Stack
 
-</div>
+- **Framework**: Vite + React + TypeScript (strict)
+- **Styling**: Tailwind CSS v3.4 + CSS Custom Properties (`src/styles/globals.css`)
+- **Motion**: GSAP (`ScrollTrigger`) + Lenis smooth scroll
+- **Typography**: Self-hosted `@fontsource-variable/geist`, `@fontsource-variable/geist-mono`, `@fontsource/instrument-serif`
+
+## Development
+
+```bash
+npm install
+npm run dev
+```
+
+## Production Build
+
+```bash
+npm run build
+npm run preview
+```
+
+## Image Slots
+
+Place production image assets inside `public/images/` matching the paths defined in `src/config/media.ts`. Until uploaded, `<Media />` renders an intentional architectural placeholder panel.

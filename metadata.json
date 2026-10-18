@@ -1,0 +1,6 @@
+{
+  "name": "Arkvoid Inc. — A world that remembers you",
+  "description": "Arkvoid is a living fantasy world where the people remember you and keep their own lives while you are away. In development. Join the waitlist.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

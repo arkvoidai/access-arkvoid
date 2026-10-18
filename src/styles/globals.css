@@ -1,0 +1,235 @@
+@import '@fontsource-variable/geist';
+@import '@fontsource-variable/geist-mono';
+@import '@fontsource/instrument-serif/400.css';
+@import '@fontsource/instrument-serif/400-italic.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #FAF8F5;
+  --paper-2: #F3F0EB;
+  --mist: #E9ECEF;
+  --line: rgba(20, 21, 26, 0.12);
+
+  --ink: #14151A;
+  --ink-2: #212529;
+  --ink-soft: #4B4F56;
+  --stone: #D1D0D0;
+  --taupe: #988686;
+  --taupe-deep: #5C4E4E;
+
+  --ember: #FB5607;
+  --ember-deep: #D94400;
+  --ember-wash: #FFE9DE;
+  --violet: #8338EC;
+  --violet-deep: #4A1D96;
+  --violet-wash: #EFE7FD;
+}
+
+@layer base {
+  html {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-family: 'Geist Variable', system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: clip;
+  }
+
+  body {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-size: clamp(1.0625rem, 1rem + 0.2vw, 1.25rem);
+    line-height: 1.55;
+    overflow-x: clip;
+    min-height: 100svh;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+    font-weight: 500;
+    letter-spacing: -0.045em;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--violet-deep);
+    outline-offset: 3px;
+  }
+}
+
+body.scroll-locked {
+  overflow: hidden;
+}
+
+/* Word and line splitter utility classes */
+.w {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  padding-bottom: 0.08em;
+  margin-bottom: -0.08em;
+}
+
+.wi {
+  display: inline-block;
+  will-change: transform;
+}
+
+.split-line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.1em;
+  margin-bottom: -0.1em;
+}
+
+.split-line-inner {
+  display: block;
+}
+
+/* Subtle dusk radial wash allowed behind hero art and final CTA only */
+.dusk-wash {
+  background: radial-gradient(
+    65% 65% at 78% 76%,
+    var(--ember-wash) 0%,
+    var(--violet-wash) 52%,
+    rgba(250, 248, 245, 0) 100%
+  );
+  opacity: 0.35;
+}
+
+/* Infinite animations that pause when offscreen */
+@keyframes emberPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.45);
+    opacity: 0.55;
+  }
+}
+
+@keyframes scrollLineLoop {
+  0% {
+    transform: translateY(-100%);
+  }
+  50% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+@keyframes diagramDotTravel {
+  0% {
+    transform: translateY(0px);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(28px);
+    opacity: 0;
+  }
+}
+
+@keyframes marqueeScroll {
+  0% {
+    transform: translate3d(0%, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@keyframes realmRingDrift {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.ember-pulse {
+  animation: emberPulse 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.scroll-line-loop {
+  animation: scrollLineLoop 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.diagram-dot-travel {
+  animation: diagramDotTravel 6s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+}
+
+.marquee-track {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  animation: marqueeScroll 40s linear infinite;
+}
+
+.realm-ring-drift {
+  transform-origin: 50% 50%;
+  animation: realmRingDrift 36s linear infinite;
+}
+
+.unknown-realm-text {
+  color: var(--taupe);
+  background-image: repeating-linear-gradient(
+    -45deg,
+    var(--taupe) 0px,
+    var(--taupe) 2px,
+    rgba(152, 134, 134, 0.35) 2px,
+    rgba(152, 134, 134, 0.35) 5px
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.marquee-outline-word {
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--ink);
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.is-offscreen .ember-pulse,
+.is-offscreen .scroll-line-loop,
+.is-offscreen .diagram-dot-travel,
+.is-offscreen .marquee-track,
+.is-offscreen .realm-ring-drift {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ember-pulse,
+  .scroll-line-loop,
+  .diagram-dot-travel,
+  .marquee-track,
+  .realm-ring-drift {
+    animation: none !important;
+  }
+}

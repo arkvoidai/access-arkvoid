@@ -1,0 +1,15 @@
+{
+  "name": "Arkvoid",
+  "short_name": "Arkvoid",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#FAF8F5",
+  "background_color": "#FAF8F5",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}
