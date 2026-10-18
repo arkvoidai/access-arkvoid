@@ -264,7 +264,7 @@ export const HowItWorks: React.FC = () => {
 
   const scenes = CONTENT.how.scenes;
 
-  // B1: Pinned 3-scene story on desktop, natural non-blocking scroll progression on mobile/touch
+  // B1: Pinned 3-scene story on both desktop (280vh) and mobile/tablet (200vh)
   useEffect(() => {
     if (reducedMotion) return undefined;
     const stage = pinStageRef.current;
@@ -272,11 +272,15 @@ export const HowItWorks: React.FC = () => {
 
     const mm = gsap.matchMedia();
 
-    mm.add('(min-width: 1024px) and (hover: hover) and (pointer: fine)', () => {
+    const buildStoryPin = (scrollLength: string, withTilt: boolean) => {
+      if (!withTilt && phoneRotateRef.current) {
+        gsap.set(phoneRotateRef.current, { rotateY: 0 });
+      }
+
       const st = ScrollTrigger.create({
         trigger: stage,
         start: 'top top',
-        end: '+=280%',
+        end: scrollLength,
         pin: true,
         scrub: 0.8,
         anticipatePin: 1,
@@ -295,7 +299,7 @@ export const HowItWorks: React.FC = () => {
             setAwayRowProgress(3);
           }
 
-          if (phoneRotateRef.current) {
+          if (withTilt && phoneRotateRef.current) {
             const rotY = -6 + self.progress * 12;
             gsap.set(phoneRotateRef.current, {
               rotateY: rotY,
@@ -306,13 +310,14 @@ export const HowItWorks: React.FC = () => {
       });
 
       stRef.current = st;
+    };
+
+    mm.add('(min-width: 1024px)', () => {
+      buildStoryPin('+=280%', true);
     });
 
-    mm.add('(max-width: 1023px), (hover: none), (pointer: coarse)', () => {
-      if (phoneRotateRef.current) {
-        gsap.set(phoneRotateRef.current, { rotateY: 0 });
-      }
-      setAwayRowProgress(3);
+    mm.add('(max-width: 1023px)', () => {
+      buildStoryPin('+=200%', false);
     });
 
     return () => {

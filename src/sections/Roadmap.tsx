@@ -8,9 +8,7 @@ import { useMediaQuery, usePrefersReducedMotion } from '../lib/hooks';
 import { Reveal, SplitHeading } from '../lib/split';
 
 export const Roadmap: React.FC = () => {
-  const isPointerFine = useMediaQuery(
-    '(min-width: 768px) and (hover: hover) and (pointer: fine)'
-  );
+  const isPointerFine = useMediaQuery('(min-width: 768px)');
   const reducedMotion = usePrefersReducedMotion();
   const useCustomDrag = isPointerFine && !reducedMotion;
 

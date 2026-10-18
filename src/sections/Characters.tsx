@@ -33,9 +33,7 @@ export const Characters: React.FC = () => {
     const grid = scrollerRef.current;
     if (!section || !grid || reducedMotion) return undefined;
 
-    const mm = gsap.matchMedia();
-
-    mm.add('(min-width: 768px)', () => {
+    const ctx = gsap.context(() => {
       const cardEls = Array.from(
         grid.querySelectorAll<HTMLElement>('.character-card')
       );
@@ -95,34 +93,9 @@ export const Characters: React.FC = () => {
           }
         );
       });
-    });
+    }, section);
 
-    mm.add('(max-width: 767px)', () => {
-      const parallaxImages = Array.from(
-        grid.querySelectorAll<HTMLElement>('.character-image-parallax')
-      );
-
-      parallaxImages.forEach((imgWrapper, idx) => {
-        const dir = idx % 2 === 0 ? 1 : -1;
-        gsap.fromTo(
-          imgWrapper,
-          { yPercent: 4 * dir, scale: 1.08 },
-          {
-            yPercent: -4 * dir,
-            scale: 1.08,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: grid,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 0.5,
-            },
-          }
-        );
-      });
-    });
-
-    return () => mm.revert();
+    return () => ctx.revert();
   }, [reducedMotion]);
 
   useEffect(() => {

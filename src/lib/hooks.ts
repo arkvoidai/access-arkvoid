@@ -25,5 +25,5 @@ export function usePrefersReducedMotion(): boolean {
 }
 
 export function useIsTouch(): boolean {
-  return useMediaQuery('(hover: none), (pointer: coarse)');
+  return useMediaQuery('(hover: none) and (pointer: coarse)');
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { MEDIA } from '../../config/media';
-import { gsap } from '../../lib/gsap';
+import { gsap, ScrollTrigger } from '../../lib/gsap';
 import { usePrefersReducedMotion } from '../../lib/hooks';
 import { getLenis } from '../../lib/smooth';
 
@@ -41,6 +41,7 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
       hasCompletedRef.current = true;
       document.body.classList.remove('scroll-locked');
       getLenis()?.start();
+      getLenis()?.resize();
       onCompleteRef.current();
     };
 
@@ -169,7 +170,12 @@ export const Preloader: React.FC<PreloaderProps> = ({ onComplete }) => {
           if (isCancelled) return;
           document.body.classList.remove('scroll-locked');
           getLenis()?.start();
+          getLenis()?.resize();
           setVisible(false);
+          window.requestAnimationFrame(() => {
+            ScrollTrigger.sort();
+            ScrollTrigger.refresh();
+          });
         },
       });
 

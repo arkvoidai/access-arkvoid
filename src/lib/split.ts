@@ -195,32 +195,52 @@ export function SplitHeading({
 
     let splitInstance = splitLines(el);
     let resizeTimer: number | undefined;
+    let lastWidth = window.innerWidth;
+    let hasRevealed = false;
+    let ctx: gsap.Context | null = null;
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        splitInstance.lines,
-        { yPercent: 110 },
-        {
-          yPercent: 0,
-          duration: 1.1,
-          stagger: 0.12,
-          delay,
-          ease: 'expo.out',
-          scrollTrigger: {
-            trigger: el,
-            start: 'top 88%',
-            once: true,
-          },
+    const createHeadingTrigger = () => {
+      ctx?.revert();
+      ctx = gsap.context(() => {
+        if (hasRevealed) {
+          gsap.set(splitInstance.lines, { yPercent: 0 });
+          return;
         }
-      );
-    }, el);
+        gsap.fromTo(
+          splitInstance.lines,
+          { yPercent: 110 },
+          {
+            yPercent: 0,
+            duration: 1.1,
+            stagger: 0.12,
+            delay,
+            ease: 'expo.out',
+            onComplete: () => {
+              hasRevealed = true;
+            },
+            scrollTrigger: {
+              trigger: el,
+              start: 'top 88%',
+              once: true,
+            },
+          }
+        );
+      }, el);
+    };
+
+    createHeadingTrigger();
 
     const handleResize = () => {
+      const nextWidth = window.innerWidth;
+      if (Math.abs(nextWidth - lastWidth) < 24) return;
+      lastWidth = nextWidth;
+
       window.clearTimeout(resizeTimer);
       resizeTimer = window.setTimeout(() => {
+        ctx?.revert();
         splitInstance.revert();
         splitInstance = splitLines(el);
-        gsap.set(splitInstance.lines, { yPercent: 0 });
+        createHeadingTrigger();
       }, 200);
     };
 
@@ -229,7 +249,7 @@ export function SplitHeading({
     return () => {
       window.removeEventListener('resize', handleResize);
       window.clearTimeout(resizeTimer);
-      ctx.revert();
+      ctx?.revert();
       splitInstance.revert();
     };
   }, [text, delay, reducedMotion]);

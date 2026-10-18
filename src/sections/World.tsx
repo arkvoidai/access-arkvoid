@@ -5,15 +5,12 @@ import { Media } from '../components/ui/Media';
 import { SECTION_IDS } from '../config/site.config';
 import { CONTENT } from '../content/site';
 import { gsap, ScrollTrigger } from '../lib/gsap';
-import { useMediaQuery, usePrefersReducedMotion } from '../lib/hooks';
+import { usePrefersReducedMotion } from '../lib/hooks';
 import { Reveal, SplitHeading } from '../lib/split';
 
 export const World: React.FC = () => {
-  const isDesktopPointer = useMediaQuery(
-    '(min-width: 1024px) and (hover: hover) and (pointer: fine)'
-  );
   const reducedMotion = usePrefersReducedMotion();
-  const usePinnedDesktop = isDesktopPointer && !reducedMotion;
+  const usePinnedDesktop = !reducedMotion;
 
   const sectionRef = useRef<HTMLElement>(null);
   const pinStageRef = useRef<HTMLDivElement>(null);
@@ -31,7 +28,7 @@ export const World: React.FC = () => {
   const totalCount = String(cards.length).padStart(2, '0');
   const currentCount = String(activeIndex + 1).padStart(2, '0');
 
-  // Desktop pinned horizontal rail + ScrollTrigger counter-parallax
+  // Pinned horizontal rail + ScrollTrigger counter-parallax
   useEffect(() => {
     if (!usePinnedDesktop) return undefined;
     const stage = pinStageRef.current;
@@ -39,9 +36,7 @@ export const World: React.FC = () => {
     const progressFill = progressFillRef.current;
     if (!stage || !track || !progressFill) return undefined;
 
-    const mm = gsap.matchMedia();
-
-    mm.add('(min-width: 1024px) and (hover: hover) and (pointer: fine)', () => {
+    const ctx = gsap.context(() => {
       const cardEls = Array.from(
         track.querySelectorAll<HTMLElement>('.world-desktop-card')
       );
@@ -50,7 +45,7 @@ export const World: React.FC = () => {
       );
 
       const getScrollAmount = () => {
-        return Math.max(0, track.scrollWidth - window.innerWidth + 96);
+        return Math.max(0, track.scrollWidth - window.innerWidth + 48);
       };
 
       gsap.set(imageScaleEls, { scale: 1.12, xPercent: -8 });
@@ -112,44 +107,13 @@ export const World: React.FC = () => {
           }
         );
       });
-    });
+    }, stage);
 
     return () => {
       scrollTriggerRef.current = null;
-      mm.revert();
+      ctx.revert();
     };
   }, [usePinnedDesktop, cards.length]);
-
-  // Touch / Tablet native horizontal swipe + ScrollTrigger vertical parallax
-  useEffect(() => {
-    if (usePinnedDesktop || reducedMotion) return undefined;
-    const scroller = mobileScrollerRef.current;
-    if (!scroller) return undefined;
-
-    const ctx = gsap.context(() => {
-      const parallaxEls = Array.from(
-        scroller.querySelectorAll<HTMLElement>('.world-card-parallax')
-      );
-
-      gsap.fromTo(
-        parallaxEls,
-        { yPercent: -5, scale: 1.1 },
-        {
-          yPercent: 5,
-          scale: 1.1,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: scroller,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 0.5,
-          },
-        }
-      );
-    }, scroller);
-
-    return () => ctx.revert();
-  }, [usePinnedDesktop, reducedMotion]);
 
   useEffect(() => {
     return () => {
@@ -295,8 +259,8 @@ export const World: React.FC = () => {
                   data-cursor="view"
                   onFocus={() => handleDesktopCardFocus(index)}
                   aria-label={`${card.number} ${card.title}: ${card.caption}`}
-                  className="world-desktop-card relative h-[64svh] max-h-[680px] shrink-0 overflow-hidden rounded-card border border-line bg-paper-2 shadow-soft"
-                  style={{ width: 'clamp(380px, 38vw, 720px)' }}
+                  className="world-desktop-card relative h-[58svh] sm:h-[64svh] max-h-[680px] shrink-0 overflow-hidden rounded-card-sm md:rounded-card border border-line bg-paper-2 shadow-soft"
+                  style={{ width: 'clamp(290px, 76vw, 720px)' }}
                 >
                   {renderCardInner(card)}
                 </article>

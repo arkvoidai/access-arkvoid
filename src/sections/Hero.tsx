@@ -159,13 +159,21 @@ export const Hero: React.FC<HeroProps> = ({ ready }) => {
     const mm = gsap.matchMedia();
 
     const buildPortalTimeline = (isDesktop: boolean) => {
-      const startClip = isDesktop
-        ? 'inset(14svh 31vw 0svh 31vw round 50vw 50vw 0vw 0vw)'
-        : 'inset(14svh 7vw 0svh 7vw round 50vw 50vw 0vw 0vw)';
-      const endClip = 'inset(0svh 0vw 0svh 0vw round 0vw 0vw 0vw 0vw)';
+      const startSide = isDesktop ? 31 : 7;
+      const portalState = {
+        top: 14,
+        side: startSide,
+        radius: 50,
+      };
+
+      const applyClip = () => {
+        clipLayer.style.clipPath = `inset(${portalState.top.toFixed(2)}% ${portalState.side.toFixed(2)}% 0% ${portalState.side.toFixed(2)}% round ${portalState.radius.toFixed(2)}vw ${portalState.radius.toFixed(2)}vw 0vw 0vw)`;
+      };
+
       const scrollDistance = isDesktop ? '+=160%' : '+=80%';
 
-      gsap.set(clipLayer, { clipPath: startClip, willChange: 'clip-path' });
+      applyClip();
+      gsap.set(clipLayer, { willChange: 'clip-path' });
       gsap.set(scaleLayer, { scale: 1.3, yPercent: 4, willChange: 'transform' });
       gsap.set(archFrame, { opacity: 1, scale: 1 });
       gsap.set([chip1, chip2, chip3], { opacity: 0, y: 24 });
@@ -191,11 +199,14 @@ export const Hero: React.FC<HeroProps> = ({ ready }) => {
 
       // Arch portal opens to full viewport while inner image scales 1.3 -> 1.0 and shifts upward
       tl.to(
-        clipLayer,
+        portalState,
         {
-          clipPath: endClip,
+          top: 0,
+          side: 0,
+          radius: 0,
           duration: 1,
           ease: 'none',
+          onUpdate: applyClip,
         },
         0
       )

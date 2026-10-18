@@ -5,8 +5,8 @@ import { Preloader } from './components/layout/Preloader';
 import { ScrollProgress } from './components/layout/ScrollProgress';
 import { Cursor } from './components/ui/Cursor';
 import { ScrollTrigger } from './lib/gsap';
-import { useIsTouch, usePrefersReducedMotion } from './lib/hooks';
-import { createSmoothScroll, scrollToSection } from './lib/smooth';
+import { usePrefersReducedMotion } from './lib/hooks';
+import { createSmoothScroll, getLenis, scrollToSection } from './lib/smooth';
 import { About } from './sections/About';
 import { Characters } from './sections/Characters';
 import { Faq } from './sections/Faq';
@@ -26,33 +26,49 @@ import { World } from './sections/World';
 
 export default function App() {
   const reducedMotion = usePrefersReducedMotion();
-  const isTouch = useIsTouch();
   const [heroReady, setHeroReady] = useState<boolean>(false);
 
   const handlePreloaderComplete = useCallback(() => {
     setHeroReady(true);
+    window.requestAnimationFrame(() => {
+      getLenis()?.resize();
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+    });
   }, []);
 
   useEffect(() => {
     let smoothController: ReturnType<typeof createSmoothScroll> | null = null;
 
-    if (!reducedMotion && !isTouch) {
+    if (!reducedMotion) {
       smoothController = createSmoothScroll();
     }
 
-    // Refresh ScrollTrigger once after fonts are ready
+    // Sort and refresh ScrollTrigger once after fonts and initial layout are ready
+    const refreshAll = () => {
+      getLenis()?.resize();
+      ScrollTrigger.sort();
+      ScrollTrigger.refresh();
+    };
+
+    const initTimer = window.setTimeout(refreshAll, 120);
+
     if (typeof document !== 'undefined' && 'fonts' in document) {
       document.fonts.ready
         .then(() => {
-          ScrollTrigger.refresh();
+          refreshAll();
         })
         .catch(() => undefined);
     }
 
+    window.addEventListener('load', refreshAll);
+
     return () => {
+      window.clearTimeout(initTimer);
+      window.removeEventListener('load', refreshAll);
       smoothController?.destroy();
     };
-  }, [reducedMotion, isTouch]);
+  }, [reducedMotion]);
 
   return (
     <div className="relative min-h-[100svh] w-full bg-paper text-ink">

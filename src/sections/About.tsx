@@ -264,14 +264,12 @@ export const About: React.FC = () => {
     return () => io.disconnect();
   }, []);
 
-  // Stacking card scale + darken scrub & Card 01 image parallax (desktop only)
+  // Stacking card scale + darken scrub & Card 01 image parallax
   useEffect(() => {
     const section = sectionRef.current;
     if (!section || reducedMotion) return undefined;
 
-    const mm = gsap.matchMedia();
-
-    mm.add('(min-width: 1024px)', () => {
+    const ctx = gsap.context(() => {
       const cards = cardRefs.current.filter((c): c is HTMLElement => c !== null);
 
       cards.forEach((card, index) => {
@@ -329,9 +327,9 @@ export const About: React.FC = () => {
           }
         );
       }
-    });
+    }, section);
 
-    return () => mm.revert();
+    return () => ctx.revert();
   }, [reducedMotion]);
 
   const renderStatusChip = (status: LayerCardContent['status']) => {
@@ -396,7 +394,7 @@ export const About: React.FC = () => {
         <div className="relative flex flex-col gap-8 md:gap-12">
           {CONTENT.about.cards.map((card, index) => {
             const isInk = card.theme === 'ink';
-            const stickyTop = 84 + index * 28;
+            const stickyTop = 84 + index * 24;
 
             return (
               <article
@@ -405,7 +403,7 @@ export const About: React.FC = () => {
                   cardRefs.current[index] = el;
                 }}
                 style={{ top: `${stickyTop}px` }}
-                className={`relative lg:sticky overflow-hidden rounded-[32px] p-6 sm:p-10 lg:p-14 shadow-soft min-h-[440px] lg:h-[78svh] flex items-center origin-top ${getCardSurfaceClass(
+                className={`sticky overflow-hidden rounded-[32px] p-6 sm:p-10 lg:p-14 shadow-soft min-h-[440px] lg:h-[78svh] flex items-center origin-top ${getCardSurfaceClass(
                   card.theme
                 )}`}
               >
