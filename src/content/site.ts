@@ -372,7 +372,7 @@ export interface SiteContent {
   footer: {
     tagline: string;
     exploreHeading: string;
-    exploreLinks: Array<{ label: string; href: string }>;
+    exploreLinks: Array<{ label: string; id: SectionId; href: string }>;
     connectHeading: string;
     legalHeading: string;
     legalLinks: [
@@ -390,13 +390,13 @@ export interface SiteContent {
 export const CONTENT: SiteContent = {
   nav: {
     links: [
-      { label: 'World', id: SECTION_IDS.world, href: `#${SECTION_IDS.world}` },
-      { label: 'Realms', id: SECTION_IDS.realms, href: `#${SECTION_IDS.realms}` },
-      { label: 'How it works', id: SECTION_IDS.how, href: `#${SECTION_IDS.how}` },
-      { label: 'Research', id: SECTION_IDS.research, href: `#${SECTION_IDS.research}` },
-      { label: 'Hardware', id: SECTION_IDS.hardware, href: `#${SECTION_IDS.hardware}` },
-      { label: 'Roadmap', id: SECTION_IDS.roadmap, href: `#${SECTION_IDS.roadmap}` },
-      { label: 'Investors', id: SECTION_IDS.investors, href: `#${SECTION_IDS.investors}` },
+      { label: 'World', id: SECTION_IDS.world, href: '/' },
+      { label: 'Realms', id: SECTION_IDS.realms, href: '/' },
+      { label: 'How it works', id: SECTION_IDS.how, href: '/' },
+      { label: 'Research', id: SECTION_IDS.research, href: '/' },
+      { label: 'Hardware', id: SECTION_IDS.hardware, href: '/' },
+      { label: 'Roadmap', id: SECTION_IDS.roadmap, href: '/' },
+      { label: 'Investors', id: SECTION_IDS.investors, href: '/' },
     ],
     cta: 'Join the waitlist',
   },
@@ -1170,14 +1170,14 @@ export const CONTENT: SiteContent = {
     tagline: 'A living world with memory. Built by Arkvoid Inc.',
     exploreHeading: 'Explore',
     exploreLinks: [
-      { label: 'World', href: `#${SECTION_IDS.world}` },
-      { label: 'Realms', href: `#${SECTION_IDS.realms}` },
-      { label: 'How it works', href: `#${SECTION_IDS.how}` },
-      { label: 'Research', href: `#${SECTION_IDS.research}` },
-      { label: 'Hardware', href: `#${SECTION_IDS.hardware}` },
-      { label: 'Roadmap', href: `#${SECTION_IDS.roadmap}` },
-      { label: 'Investors', href: `#${SECTION_IDS.investors}` },
-      { label: 'FAQ', href: `#${SECTION_IDS.faq}` },
+      { label: 'World', id: SECTION_IDS.world, href: '/' },
+      { label: 'Realms', id: SECTION_IDS.realms, href: '/' },
+      { label: 'How it works', id: SECTION_IDS.how, href: '/' },
+      { label: 'Research', id: SECTION_IDS.research, href: '/' },
+      { label: 'Hardware', id: SECTION_IDS.hardware, href: '/' },
+      { label: 'Roadmap', id: SECTION_IDS.roadmap, href: '/' },
+      { label: 'Investors', id: SECTION_IDS.investors, href: '/' },
+      { label: 'FAQ', id: SECTION_IDS.faq, href: '/' },
     ],
     connectHeading: 'Connect',
     legalHeading: 'Legal',

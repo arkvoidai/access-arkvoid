@@ -43,14 +43,42 @@ export function getLenis(): Lenis | null {
   return activeInstance;
 }
 
+export function scrollToTop(): void {
+  if (window.location.hash) {
+    window.history.replaceState(
+      null,
+      '',
+      window.location.pathname + window.location.search
+    );
+  }
+  if (activeInstance) {
+    activeInstance.scrollTo(0, { duration: 1.4 });
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
 export function scrollToSection(target: string, offset = -80): void {
-  const el = document.querySelector<HTMLElement>(target);
+  if (window.location.hash) {
+    window.history.replaceState(
+      null,
+      '',
+      window.location.pathname + window.location.search
+    );
+  }
+
+  const cleanId = target.startsWith('#') ? target.slice(1) : target;
+  if (cleanId === 'top') {
+    scrollToTop();
+    return;
+  }
+
+  const el = document.getElementById(cleanId);
   if (!el) return;
 
   if (activeInstance) {
     activeInstance.scrollTo(el, { offset, duration: 1.4 });
   } else {
-    const top = el.getBoundingClientRect().top + window.scrollY + offset;
-    window.scrollTo({ top, behavior: 'smooth' });
+    el.scrollIntoView({ behavior: 'smooth' });
   }
 }

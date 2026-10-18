@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { SECTION_IDS, SITE } from '../../config/site.config';
+import { SECTION_IDS, SITE, type SectionId } from '../../config/site.config';
 import { CONTENT } from '../../content/site';
 import { gsap } from '../../lib/gsap';
 import { usePrefersReducedMotion } from '../../lib/hooks';
-import { getLenis, scrollToSection } from '../../lib/smooth';
+import { getLenis, scrollToSection, scrollToTop } from '../../lib/smooth';
 import { Button } from '../ui/Button';
 import { Logo } from '../ui/Logo';
 
@@ -94,11 +94,22 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
     onClose();
     window.setTimeout(() => {
-      scrollToSection(href, -80);
+      scrollToTop();
+    }, 80);
+  };
+
+  const handleNavClick = (
+    e: React.MouseEvent<HTMLElement>,
+    sectionId: SectionId
+  ) => {
+    e.preventDefault();
+    onClose();
+    window.setTimeout(() => {
+      scrollToSection(sectionId, -80);
     }, 80);
   };
 
@@ -117,8 +128,8 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
       {/* Top bar with logo and accessible close button */}
       <div className="flex items-center justify-between border-b border-line pb-5">
         <a
-          href={`#${SECTION_IDS.hero}`}
-          onClick={(e) => handleNavClick(e, `#${SECTION_IDS.hero}`)}
+          href="/"
+          onClick={handleLogoClick}
           className="inline-flex items-center text-ink"
         >
           <Logo variant="lockup" size={26} />
@@ -143,8 +154,8 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
             return (
               <li key={item.id} className="overflow-hidden">
                 <a
-                  href={item.href}
-                  onClick={(e) => handleNavClick(e, item.href)}
+                  href="/"
+                  onClick={(e) => handleNavClick(e, item.id)}
                   className="mobile-nav-item-inner group flex items-baseline gap-4 py-1 text-ink transition-colors hover:text-ember-deep"
                 >
                   <span className="font-mono text-[12px] uppercase tracking-[0.14em] text-ink-soft tabular-nums">
@@ -169,14 +180,7 @@ export const MobileMenu: React.FC<MobileMenuProps> = ({ isOpen, onClose }) => {
           variant="primary"
           size="lg"
           icon="arrow"
-          href={`#${SECTION_IDS.join}`}
-          onClick={(e) => {
-            e.preventDefault();
-            onClose();
-            window.setTimeout(() => {
-              scrollToSection(`#${SECTION_IDS.join}`, -80);
-            }, 80);
-          }}
+          onClick={(e) => handleNavClick(e, SECTION_IDS.join)}
           className="w-full"
         >
           {CONTENT.nav.cta}

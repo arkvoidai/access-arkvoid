@@ -177,7 +177,7 @@ export const Characters: React.FC = () => {
 
   const handleHowClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    scrollToSection(`#${SECTION_IDS.how}`, -80);
+    scrollToSection(SECTION_IDS.how, -80);
   };
 
   return (
@@ -382,7 +382,6 @@ export const Characters: React.FC = () => {
             <Button
               variant="link"
               icon="arrow"
-              href={`#${SECTION_IDS.how}`}
               onClick={handleHowClick}
             >
               {CONTENT.characters.bottomLinkLabel}

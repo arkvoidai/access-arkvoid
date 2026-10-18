@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { SECTION_IDS, SITE } from '../../config/site.config';
+import { SITE, type SectionId } from '../../config/site.config';
 import { CONTENT } from '../../content/site';
 import { gsap } from '../../lib/gsap';
 import { usePrefersReducedMotion } from '../../lib/hooks';
-import { getLenis, scrollToSection } from '../../lib/smooth';
+import { getLenis, scrollToSection, scrollToTop } from '../../lib/smooth';
 import { Container } from '../ui/Container';
 import { Logo } from '../ui/Logo';
 
@@ -132,13 +132,21 @@ export const Footer: React.FC = () => {
     };
   }, [activeLegalKey]);
 
-  const handleAnchorClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+  const handleLogoClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    scrollToSection(href, -80);
+    scrollToTop();
+  };
+
+  const handleExploreClick = (
+    e: React.MouseEvent<HTMLAnchorElement>,
+    sectionId: SectionId
+  ) => {
+    e.preventDefault();
+    scrollToSection(sectionId, -80);
   };
 
   const handleBackToTop = () => {
-    scrollToSection(`#${SECTION_IDS.hero}`, 0);
+    scrollToTop();
   };
 
   const activeLegalDoc = CONTENT.footer.legalLinks.find(
@@ -153,8 +161,8 @@ export const Footer: React.FC = () => {
         {/* Top Row: Lockup logo & short line */}
         <div className="flex flex-col justify-between gap-6 border-b border-line pb-12 md:flex-row md:items-center">
           <a
-            href={`#${SECTION_IDS.hero}`}
-            onClick={(e) => handleAnchorClick(e, `#${SECTION_IDS.hero}`)}
+            href="/"
+            onClick={handleLogoClick}
             className="inline-flex items-center text-ink"
           >
             <Logo variant="lockup" size={28} />
@@ -172,10 +180,10 @@ export const Footer: React.FC = () => {
             </h3>
             <ul className="mt-4 grid grid-cols-2 gap-x-4 gap-y-2.5 sm:grid-cols-1">
               {CONTENT.footer.exploreLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.id}>
                   <a
-                    href={link.href}
-                    onClick={(e) => handleAnchorClick(e, link.href)}
+                    href="/"
+                    onClick={(e) => handleExploreClick(e, link.id)}
                     className="inline-flex py-0.5 text-[16px] text-ink transition-colors hover:text-ember-deep"
                   >
                     {link.label}

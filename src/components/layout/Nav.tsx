@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { SECTION_IDS, type SectionId } from '../../config/site.config';
 import { CONTENT } from '../../content/site';
-import { scrollToSection } from '../../lib/smooth';
+import { scrollToSection, scrollToTop } from '../../lib/smooth';
 import { Button } from '../ui/Button';
 import { Logo } from '../ui/Logo';
 import { MobileMenu } from './MobileMenu';
@@ -19,6 +19,7 @@ export const Nav: React.FC = () => {
 
       if (currentY < 80) {
         setHidden(false);
+        setActiveId(SECTION_IDS.hero);
       } else if (delta > 8) {
         setHidden(true);
       } else if (delta < -8) {
@@ -55,9 +56,17 @@ export const Nav: React.FC = () => {
     return () => io.disconnect();
   }, []);
 
-  const handleAnchor = (e: React.MouseEvent<HTMLElement>, href: string) => {
+  const handleLogoClick = (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault();
-    scrollToSection(href, -80);
+    scrollToTop();
+  };
+
+  const handleSectionClick = (
+    e: React.MouseEvent<HTMLElement>,
+    sectionId: SectionId
+  ) => {
+    e.preventDefault();
+    scrollToSection(sectionId, -80);
   };
 
   return (
@@ -77,8 +86,8 @@ export const Nav: React.FC = () => {
         >
           {/* Left: Lockup Logo */}
           <a
-            href={`#${SECTION_IDS.hero}`}
-            onClick={(e) => handleAnchor(e, `#${SECTION_IDS.hero}`)}
+            href="/"
+            onClick={handleLogoClick}
             className="inline-flex min-h-[44px] items-center pl-2 text-ink shrink-0"
           >
             <Logo variant="lockup" size={26} />
@@ -94,8 +103,8 @@ export const Nav: React.FC = () => {
               return (
                 <a
                   key={link.id}
-                  href={link.href}
-                  onClick={(e) => handleAnchor(e, link.href)}
+                  href="/"
+                  onClick={(e) => handleSectionClick(e, link.id)}
                   className="relative inline-flex min-h-[40px] items-center text-[15px] font-normal text-ink-soft transition-colors duration-300 hover:text-ink whitespace-nowrap shrink-0"
                 >
                   <span className={isActive ? 'text-ink font-medium' : ''}>
@@ -119,8 +128,7 @@ export const Nav: React.FC = () => {
                 variant="primary"
                 size="md"
                 icon="arrow"
-                href={`#${SECTION_IDS.join}`}
-                onClick={(e) => handleAnchor(e, `#${SECTION_IDS.join}`)}
+                onClick={(e) => handleSectionClick(e, SECTION_IDS.join)}
               >
                 {CONTENT.nav.cta}
               </Button>

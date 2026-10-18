@@ -351,8 +351,7 @@ export const Hero: React.FC<HeroProps> = ({ ready }) => {
                     variant="primary"
                     size="lg"
                     icon="arrow"
-                    href={`#${SECTION_IDS.join}`}
-                    onClick={(e) => handleScrollClick(e, `#${SECTION_IDS.join}`)}
+                    onClick={(e) => handleScrollClick(e, SECTION_IDS.join)}
                   >
                     {CONTENT.hero.primaryCta}
                   </Button>
@@ -360,8 +359,7 @@ export const Hero: React.FC<HeroProps> = ({ ready }) => {
                   <Button
                     variant="secondary"
                     size="lg"
-                    href={`#${SECTION_IDS.how}`}
-                    onClick={(e) => handleScrollClick(e, `#${SECTION_IDS.how}`)}
+                    onClick={(e) => handleScrollClick(e, SECTION_IDS.how)}
                   >
                     {CONTENT.hero.secondaryCta}
                   </Button>
