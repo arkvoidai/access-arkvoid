@@ -5,36 +5,55 @@ import { useIsTouch, usePrefersReducedMotion } from '../../lib/hooks';
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'link';
   size?: 'lg' | 'md';
-  icon?: 'arrow';
+  icon?: 'arrow' | 'external';
+  hoverAnimation?: 'default' | 'violet-scale';
   href?: string;
   target?: string;
   rel?: string;
   children: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = ({
-  variant = 'primary',
-  size = 'lg',
-  icon,
-  href,
-  target,
-  rel,
-  children,
-  className = '',
-  onClick,
-  ...rest
-}) => {
+export const Button = React.forwardRef<HTMLElement, ButtonProps>(function Button(
+  {
+    variant = 'primary',
+    size = 'lg',
+    icon,
+    hoverAnimation = 'default',
+    href,
+    target,
+    rel,
+    children,
+    className = '',
+    onClick,
+    style,
+    ...rest
+  },
+  forwardedRef
+) {
   const wrapperRef = useRef<HTMLElement | null>(null);
   const isTouch = useIsTouch();
   const reducedMotion = usePrefersReducedMotion();
+  const isVioletHover = hoverAnimation === 'violet-scale' || icon === 'external';
+
+  const handlePointerEnter = () => {
+    if (reducedMotion || !wrapperRef.current) return;
+    if (isVioletHover) {
+      gsap.to(wrapperRef.current, {
+        scale: 1.03,
+        borderColor: 'var(--violet, #8338EC)',
+        duration: 0.35,
+        ease: 'power2.out',
+      });
+    }
+  };
 
   const handlePointerMove = (e: React.PointerEvent<HTMLElement>) => {
     if (isTouch || reducedMotion || !wrapperRef.current) return;
     const rect = wrapperRef.current.getBoundingClientRect();
     const relX = e.clientX - (rect.left + rect.width / 2);
     const relY = e.clientY - (rect.top + rect.height / 2);
-    const moveX = Math.max(-10, Math.min(10, (relX / (rect.width / 2)) * 10));
-    const moveY = Math.max(-10, Math.min(10, (relY / (rect.height / 2)) * 10));
+    const moveX = Math.max(-8, Math.min(8, (relX / (rect.width / 2)) * 8));
+    const moveY = Math.max(-8, Math.min(8, (relY / (rect.height / 2)) * 8));
 
     gsap.to(wrapperRef.current, {
       x: moveX,
@@ -46,14 +65,36 @@ export const Button: React.FC<ButtonProps> = ({
   };
 
   const handlePointerLeave = () => {
-    if (isTouch || reducedMotion || !wrapperRef.current) return;
-    gsap.to(wrapperRef.current, {
-      x: 0,
-      y: 0,
-      duration: 0.8,
-      ease: 'elastic.out(1, 0.4)',
-      overwrite: 'auto',
-    });
+    if (!wrapperRef.current) return;
+    if (isVioletHover) {
+      gsap.to(wrapperRef.current, {
+        x: 0,
+        y: 0,
+        scale: 1,
+        borderColor: 'var(--ink, #14151A)',
+        duration: 0.45,
+        ease: 'power2.out',
+        overwrite: 'auto',
+      });
+    } else {
+      if (isTouch || reducedMotion) return;
+      gsap.to(wrapperRef.current, {
+        x: 0,
+        y: 0,
+        duration: 0.8,
+        ease: 'elastic.out(1, 0.4)',
+        overwrite: 'auto',
+      });
+    }
+  };
+
+  const setNodeRef = (node: HTMLElement | null) => {
+    wrapperRef.current = node;
+    if (typeof forwardedRef === 'function') {
+      forwardedRef(node);
+    } else if (forwardedRef) {
+      (forwardedRef as React.MutableRefObject<HTMLElement | null>).current = node;
+    }
   };
 
   const heightClass = size === 'lg' ? 'h-[60px]' : 'h-[52px]';
@@ -77,12 +118,31 @@ export const Button: React.FC<ButtonProps> = ({
     </svg>
   );
 
+  const externalSvg = (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 16 16"
+      fill="none"
+      aria-hidden="true"
+      className="transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0"
+    >
+      <path
+        d="M4.5 11.5L11.5 4.5M11.5 4.5H6.5M11.5 4.5V9.5"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+
   let variantClasses = '';
   let contentNodes: React.ReactNode = null;
 
   if (variant === 'primary') {
     const paddingClass = icon === 'arrow' ? 'pl-[28px] pr-[12px]' : 'px-[28px]';
-    variantClasses = `group relative inline-flex items-center justify-between gap-4 rounded-full bg-ink text-paper overflow-hidden select-none whitespace-nowrap shrink-0 ${heightClass} ${paddingClass} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-violet-deep`;
+    variantClasses = `group relative inline-flex items-center justify-between gap-4 rounded-full border border-ink bg-ink text-paper overflow-hidden select-none whitespace-nowrap shrink-0 ${heightClass} ${paddingClass} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-violet-deep`;
     contentNodes = (
       <>
         {icon !== 'arrow' && (
@@ -108,17 +168,24 @@ export const Button: React.FC<ButtonProps> = ({
       </>
     );
   } else if (variant === 'secondary') {
-    variantClasses = `group relative inline-flex items-center justify-center gap-3 rounded-full border border-ink bg-transparent px-[28px] text-ink overflow-hidden select-none whitespace-nowrap shrink-0 ${heightClass} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-violet-deep`;
+    variantClasses = `group relative inline-flex items-center justify-center gap-2 rounded-full border border-ink bg-transparent px-[24px] text-ink overflow-hidden select-none whitespace-nowrap shrink-0 ${heightClass} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-violet-deep transition-colors duration-300`;
     contentNodes = (
       <>
+        {!isVioletHover && (
+          <span
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-ink origin-bottom scale-y-0 transition-transform duration-[600ms] ease-expo-out group-hover:scale-y-100"
+          />
+        )}
         <span
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 bg-ink origin-bottom scale-y-0 transition-transform duration-[600ms] ease-expo-out group-hover:scale-y-100"
-        />
-        <span className="relative z-10 text-[16px] font-medium tracking-[-0.01em] transition-colors duration-[600ms] ease-expo-out group-hover:text-paper">
-          {children}
+          className={`relative z-10 text-[16px] font-medium tracking-[-0.01em] inline-flex items-center gap-2 transition-colors duration-300 ${
+            isVioletHover ? 'group-hover:text-violet' : 'group-hover:text-paper'
+          }`}
+        >
+          <span>{children}</span>
+          {icon === 'external' && externalSvg}
         </span>
-        {icon === 'arrow' && (
+        {icon === 'arrow' && !isVioletHover && (
           <span className="relative z-10 inline-flex items-center justify-center transition-colors duration-[600ms] ease-expo-out group-hover:text-paper">
             {arrowSvg}
           </span>
@@ -145,17 +212,17 @@ export const Button: React.FC<ButtonProps> = ({
   if (href) {
     return (
       <a
-        ref={(node) => {
-          wrapperRef.current = node;
-        }}
+        ref={setNodeRef}
         href={href}
         target={target}
         rel={rel}
+        style={style}
         onClick={(e) => {
           if (onClick) {
             onClick(e as unknown as React.MouseEvent<HTMLButtonElement>);
           }
         }}
+        onPointerEnter={handlePointerEnter}
         onPointerMove={handlePointerMove}
         onPointerLeave={handlePointerLeave}
         className={`${variantClasses} ${className}`}
@@ -167,11 +234,11 @@ export const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      ref={(node) => {
-        wrapperRef.current = node;
-      }}
+      ref={setNodeRef}
       type="button"
+      style={style}
       onClick={onClick}
+      onPointerEnter={handlePointerEnter}
       onPointerMove={handlePointerMove}
       onPointerLeave={handlePointerLeave}
       className={`${variantClasses} ${className}`}
@@ -180,4 +247,4 @@ export const Button: React.FC<ButtonProps> = ({
       {contentNodes}
     </button>
   );
-};
+});

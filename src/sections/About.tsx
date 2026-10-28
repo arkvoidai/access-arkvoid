@@ -391,10 +391,10 @@ export const About: React.FC = () => {
         </div>
 
         {/* Stacking sticky cards */}
-        <div className="relative flex flex-col gap-8 md:gap-12">
+        <div className="relative flex flex-col gap-6 md:gap-12">
           {CONTENT.about.cards.map((card, index) => {
             const isInk = card.theme === 'ink';
-            const stickyTop = 84 + index * 24;
+            const stickyTop = 72 + index * 20;
 
             return (
               <article
@@ -403,7 +403,7 @@ export const About: React.FC = () => {
                   cardRefs.current[index] = el;
                 }}
                 style={{ top: `${stickyTop}px` }}
-                className={`sticky overflow-hidden rounded-[32px] p-6 sm:p-10 lg:p-14 shadow-soft min-h-[440px] lg:h-[78svh] flex items-center origin-top ${getCardSurfaceClass(
+                className={`sticky overflow-hidden rounded-[28px] sm:rounded-[32px] p-6 sm:p-10 lg:p-14 shadow-soft min-h-[460px] lg:h-[78svh] flex items-center origin-top ${getCardSurfaceClass(
                   card.theme
                 )}`}
               >
@@ -416,9 +416,9 @@ export const About: React.FC = () => {
                   className="pointer-events-none absolute inset-0 z-20 bg-ink opacity-0"
                 />
 
-                <div className="relative z-10 grid h-full w-full grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
+                <div className="relative z-10 grid h-full w-full grid-cols-1 items-center gap-8 lg:grid-cols-12 lg:gap-12">
                   {/* Left column (55% on desktop -> 7 of 12 cols) */}
-                  <div className="flex flex-col justify-between gap-6 lg:col-span-7">
+                  <div className="flex flex-col justify-between gap-4 sm:gap-6 lg:col-span-7">
                     <div className="flex flex-wrap items-center gap-3">
                       <span
                         className={`font-mono text-[13px] uppercase tracking-[0.14em] tabular-nums ${
@@ -446,11 +446,11 @@ export const About: React.FC = () => {
                       {card.body}
                     </p>
 
-                    <ul className="mt-2 flex flex-col gap-3 border-t border-current/10 pt-5">
+                    <ul className="mt-1 lg:mt-2 flex flex-col gap-2.5 sm:gap-3 border-t border-current/10 pt-4 sm:pt-5">
                       {card.lines.map((line) => (
                         <li
                           key={line}
-                          className={`flex items-center gap-3.5 text-[16px] md:text-[17px] ${
+                          className={`flex items-center gap-3.5 text-[15px] sm:text-[16px] md:text-[17px] ${
                             isInk ? 'text-paper/90' : 'text-ink'
                           }`}
                         >
@@ -465,7 +465,7 @@ export const About: React.FC = () => {
                   </div>
 
                   {/* Right column (45% on desktop -> 5 of 12 cols) */}
-                  <div className="h-full w-full lg:col-span-5 flex items-center justify-center">
+                  <div className="hidden lg:flex h-full w-full lg:col-span-5 items-center justify-center">
                     {index === 0 && (
                       <div className="relative h-[300px] sm:h-[360px] lg:h-full max-h-[520px] w-full max-w-[420px] overflow-hidden rounded-t-full border border-line bg-paper-2">
                         <div ref={courtyardParallaxRef} className="h-full w-full">

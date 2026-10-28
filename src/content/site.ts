@@ -132,6 +132,7 @@ export interface SiteContent {
     lead: string;
     primaryCta: string;
     secondaryCta: string;
+    demoUrl?: string;
     statusLine: string;
     scrollLabel: string;
     facts: HeroFact[];
@@ -405,7 +406,8 @@ export const CONTENT: SiteContent = {
     h1Lines: ['A world that', '*remembers*', 'you.'],
     lead: 'Arkvoid is a living world of immortals, sects and spirit beasts. The people in it remember what you did, live their own lives while you are away, and are still there when you come back.',
     primaryCta: 'Join the waitlist',
-    secondaryCta: 'See how it works',
+    secondaryCta: 'View Demo',
+    demoUrl: 'https://world.arkvoid.com',
     statusLine: 'In development. The waitlist gets early access first.',
     scrollLabel: 'Scroll',
     facts: [

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { SECTION_IDS } from '../config/site.config';
 import { CONTENT } from '../content/site';
 import { gsap } from '../lib/gsap';
@@ -33,6 +33,43 @@ export const Hero: React.FC<HeroProps> = ({ ready }) => {
   const chip2Ref = useRef<HTMLDivElement>(null);
   const chip3Ref = useRef<HTMLDivElement>(null);
   const portalEndTextRef = useRef<HTMLDivElement>(null);
+
+  const primaryButtonRef = useRef<HTMLElement | null>(null);
+  const [buttonWidth, setButtonWidth] = useState<number | undefined>(undefined);
+
+  // Keep View Demo button dimensions exactly matching Join the waitlist button
+  useEffect(() => {
+    const el = primaryButtonRef.current;
+    if (!el) return undefined;
+
+    const measure = () => {
+      const rect = el.getBoundingClientRect();
+      const w = rect.width || el.offsetWidth;
+      if (w > 0) {
+        setButtonWidth(Math.round(w));
+      }
+    };
+
+    measure();
+    const rafId = requestAnimationFrame(measure);
+    const timerId = setTimeout(measure, 100);
+
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(measure) : null;
+    ro?.observe(el);
+
+    if (typeof document !== 'undefined' && 'fonts' in document) {
+      document.fonts.ready.then(measure).catch(() => undefined);
+    }
+
+    window.addEventListener('resize', measure);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(timerId);
+      ro?.disconnect();
+      window.removeEventListener('resize', measure);
+    };
+  }, [ready]);
 
   // Offscreen observer to pause infinite CSS animations in Scene A
   useEffect(() => {
@@ -359,6 +396,7 @@ export const Hero: React.FC<HeroProps> = ({ ready }) => {
 
                 <div className="flex flex-wrap items-center gap-4">
                   <Button
+                    ref={primaryButtonRef}
                     variant="primary"
                     size="lg"
                     icon="arrow"
@@ -370,7 +408,21 @@ export const Hero: React.FC<HeroProps> = ({ ready }) => {
                   <Button
                     variant="secondary"
                     size="lg"
-                    onClick={(e) => handleScrollClick(e, SECTION_IDS.how)}
+                    icon="external"
+                    hoverAnimation="violet-scale"
+                    href={CONTENT.hero.demoUrl || 'https://world.arkvoid.com'}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="justify-center"
+                    style={
+                      buttonWidth
+                        ? {
+                            width: `${buttonWidth}px`,
+                            minWidth: `${buttonWidth}px`,
+                            maxWidth: `${buttonWidth}px`,
+                          }
+                        : undefined
+                    }
                   >
                     {CONTENT.hero.secondaryCta}
                   </Button>
