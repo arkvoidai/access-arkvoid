@@ -11,7 +11,7 @@ let activeInstance: Lenis | null = null;
 
 export function createSmoothScroll(): SmoothScrollController {
   const lenis = new Lenis({
-    lerp: 0.09,
+    lerp: 0.11,
     smoothWheel: true,
     syncTouch: false,
     wheelMultiplier: 1,
@@ -20,19 +20,14 @@ export function createSmoothScroll(): SmoothScrollController {
   activeInstance = lenis;
   lenis.on('scroll', ScrollTrigger.update);
 
-  const tick = (t: number) => {
-    lenis.raf(t * 1000);
-  };
-
+  const tick = (t: number) => lenis.raf(t * 1000);
   gsap.ticker.add(tick);
-  gsap.ticker.lagSmoothing(0);
+  // Keep GSAP's default lag smoothing; disabling it can amplify long-frame jumps.
 
   return {
     lenis,
     destroy() {
-      if (activeInstance === lenis) {
-        activeInstance = null;
-      }
+      if (activeInstance === lenis) activeInstance = null;
       gsap.ticker.remove(tick);
       lenis.destroy();
     },
@@ -45,40 +40,20 @@ export function getLenis(): Lenis | null {
 
 export function scrollToTop(): void {
   if (window.location.hash) {
-    window.history.replaceState(
-      null,
-      '',
-      window.location.pathname + window.location.search
-    );
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
   }
-  if (activeInstance) {
-    activeInstance.scrollTo(0, { duration: 1.4 });
-  } else {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  if (activeInstance) activeInstance.scrollTo(0, { duration: 1.1 });
+  else window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 export function scrollToSection(target: string, offset = -80): void {
   if (window.location.hash) {
-    window.history.replaceState(
-      null,
-      '',
-      window.location.pathname + window.location.search
-    );
+    window.history.replaceState(null, '', window.location.pathname + window.location.search);
   }
-
   const cleanId = target.startsWith('#') ? target.slice(1) : target;
-  if (cleanId === 'top') {
-    scrollToTop();
-    return;
-  }
-
+  if (cleanId === 'top') return scrollToTop();
   const el = document.getElementById(cleanId);
   if (!el) return;
-
-  if (activeInstance) {
-    activeInstance.scrollTo(el, { offset, duration: 1.4 });
-  } else {
-    el.scrollIntoView({ behavior: 'smooth' });
-  }
+  if (activeInstance) activeInstance.scrollTo(el, { offset, duration: 1.1 });
+  else el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
