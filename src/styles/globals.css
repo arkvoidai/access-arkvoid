@@ -125,9 +125,6 @@ body.scroll-locked { overflow: hidden; }
   .dusk-wash { opacity: 0.22; filter: blur(16px); }
   .marquee-track { animation-duration: 58s; }
   .realm-ring-drift { animation-duration: 54s; }
-  /* Keep touch interaction compositor-friendly; avoid expensive blurred layers. */
-  [class*="blur-"] { filter: none !important; }
-  .world-desktop-card { transform: none !important; }
 }
 
 @media (hover: none), (pointer: coarse) {
