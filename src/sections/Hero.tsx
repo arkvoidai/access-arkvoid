@@ -303,11 +303,24 @@ export const Hero: React.FC<HeroProps> = ({ ready }) => {
       );
     };
 
-    mm.add('(min-width: 1024px)', () => {
+    // Touch devices get a stable full-bleed scene instead of a pinned scrub timeline.
+    // This avoids expensive clip-path interpolation and scroll pinning on mobile browsers.
+    mm.add('(hover: none) and (pointer: coarse)', () => {
+      gsap.set(clipLayer, {
+        clipPath: 'inset(0% 0% 0% 0% round 0px)',
+        willChange: 'auto',
+      });
+      gsap.set(scaleLayer, { scale: 1, yPercent: 0, willChange: 'auto' });
+      gsap.set(archFrame, { opacity: 0 });
+      gsap.set([chip1, chip2, chip3], { opacity: 0, y: 0 });
+      gsap.set(endText, { opacity: 1, y: 0 });
+    });
+
+    mm.add('(hover: hover) and (pointer: fine) and (min-width: 1024px)', () => {
       buildPortalTimeline(true);
     });
 
-    mm.add('(max-width: 1023px)', () => {
+    mm.add('(hover: hover) and (pointer: fine) and (max-width: 1023px)', () => {
       buildPortalTimeline(false);
     });
 

@@ -5,7 +5,7 @@ import { Preloader } from './components/layout/Preloader';
 import { ScrollProgress } from './components/layout/ScrollProgress';
 import { Cursor } from './components/ui/Cursor';
 import { ScrollTrigger } from './lib/gsap';
-import { usePrefersReducedMotion } from './lib/hooks';
+import { useIsTouch, usePrefersReducedMotion } from './lib/hooks';
 import { createSmoothScroll, getLenis, scrollToSection } from './lib/smooth';
 import { About } from './sections/About';
 import { Characters } from './sections/Characters';
@@ -26,6 +26,7 @@ import { World } from './sections/World';
 
 export default function App() {
   const reducedMotion = usePrefersReducedMotion();
+  const isTouch = useIsTouch();
   const [heroReady, setHeroReady] = useState<boolean>(false);
 
   const handlePreloaderComplete = useCallback(() => {
@@ -39,12 +40,9 @@ export default function App() {
 
   useEffect(() => {
     let smoothController: ReturnType<typeof createSmoothScroll> | null = null;
+    // Native touch scrolling avoids a second scroll engine competing with mobile browsers.
+    if (!reducedMotion && !isTouch) smoothController = createSmoothScroll();
 
-    if (!reducedMotion) {
-      smoothController = createSmoothScroll();
-    }
-
-    // Sort and refresh ScrollTrigger once after fonts and initial layout are ready
     const refreshAll = () => {
       getLenis()?.resize();
       ScrollTrigger.sort();
@@ -52,15 +50,7 @@ export default function App() {
     };
 
     const initTimer = window.setTimeout(refreshAll, 120);
-
-    if (typeof document !== 'undefined' && 'fonts' in document) {
-      document.fonts.ready
-        .then(() => {
-          refreshAll();
-        })
-        .catch(() => undefined);
-    }
-
+    if ('fonts' in document) document.fonts.ready.then(refreshAll).catch(() => undefined);
     window.addEventListener('load', refreshAll);
 
     return () => {
@@ -68,11 +58,10 @@ export default function App() {
       window.removeEventListener('load', refreshAll);
       smoothController?.destroy();
     };
-  }, [reducedMotion]);
+  }, [reducedMotion, isTouch]);
 
   return (
     <div className="relative min-h-[100svh] w-full bg-paper text-ink">
-      {/* Skip to content link as the first focusable element — never sets a URL hash */}
       <a
         href="/"
         onClick={(e) => {
